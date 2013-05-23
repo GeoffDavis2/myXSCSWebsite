@@ -1,0 +1,98 @@
+<!doctype html>
+
+<html>
+
+<head>
+<title>
+Countdown till Geoff Davis can start working for you
+</title>
+</head>
+
+
+<body>
+
+<h1>When can Geoff Davis start working for my company?</h1>
+
+<script type="text/javascript">
+<!--
+
+function countdown(yr, m, d){
+	var currJDt = 0;
+	var tgtJDt = 0;
+	var daysTo = 0;
+	theDate = new Date();
+	var daysInMonths = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+	//Get days from 0AD to Target Date, I know it doesn't take leap year into account	
+	for (x=0;x<=m-1;x++) tgtJDt += daysInMonths[x];
+	tgtJDt += d;
+	tgtJDt += yr*365;
+
+	//Get days from 0AD to Current Date, I know it doesn't take leap year into account	
+	for (x=0;x<=theDate.getMonth();x++) currJDt += daysInMonths[x];
+	currJDt += d;
+	currJDt += theDate.getFullYear()*365;
+	
+	//Find the difference and output the answer
+	daysTo = tgtJDt - currJDt;
+	if (daysTo <= 0){document.write("He can start working now!<br/>");
+	}else{document.write("In " + daysTo + " days he can start working for you.<br/>");}
+
+
+	return; 
+}
+
+countdown(2013,08,15);
+
+//-->
+</script>
+
+
+<h3>See the actual JavaScript below...</h3>
+<hr/>
+
+<xmp>
+<script type="text/javascript">
+<!--
+
+function countdown(yr, m, d){
+	var currJDt = 0;
+	var tgtJDt = 0;
+	var daysTo = 0;
+	theDate = new Date();
+	var daysInMonths = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+	//Get days from 0AD to Target Date, I know it doesn't take leap year into account	
+	for (x=0;x<=m-1;x++) tgtJDt += daysInMonths[x];
+	tgtJDt += d;
+	tgtJDt += yr*365;
+
+	//Get days from 0AD to Current Date, I know it doesn't take leap year into account	
+	for (x=0;x<=theDate.getMonth();x++) currJDt += daysInMonths[x];
+	currJDt += d;
+	currJDt += theDate.getFullYear()*365;
+	
+	//Find the difference and output the answer
+	daysTo = tgtJDt - currJDt;
+	if (daysTo <= 0){document.write("He can start working now!<br/>");
+	}else{document.write("In " + daysTo + " days he can start working for you.<br/>");}
+
+
+	return; 
+}
+
+countdown(2013,08,15);
+
+//-->
+</script>
+</xmp>
+
+
+<hr/>
+<a href="index.html">Back to the Index Page<a/>
+<hr/>
+
+</body>
+
+
+</html>
