@@ -1,0 +1,120 @@
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
+
+public class MainClass {
+	public static final String theApiKey = "this is the api key";
+	public static final String theAPI_URL = "http://api.zappos.com/Product/";
+	public static final String theDirName = "images";
+
+	
+	public static void main(String[] args) {
+		ArrayList<String> theSKU_List = new ArrayList<String>();
+
+		// Load the SKUs from the file into theSKU_List
+		theSKU_List = getSKUsFromFile(getFileName());
+
+		// If the images directory does not exist, create it
+		File theDirFile = new File(theDirName);
+		if (!theDirFile.exists()) theDirFile.mkdir();
+			
+		// for each SKU in theSKU_List, get it's URL string then pass the URL string and SKU to getSavePics
+		if (theSKU_List != null) for (String theSKU: theSKU_List)
+			getAndSavePics(getURL(theSKU), theSKU);
+		else System.out.printf("Not able to search for any SKUs.\n");
+	} 
+	
+	
+	private static String getURL(String theSKU) {
+		String theResponse, imgURL = "";
+		int f, l = 0;
+		try {		
+			// Make API Request
+			URL theRequest = new URL (theAPI_URL + theSKU + "?key=" + theApiKey);
+			HttpURLConnection theConnection = (HttpURLConnection) theRequest.openConnection();
+			theConnection.setRequestMethod("GET");
+			theConnection.setRequestProperty("Accept", "application/json");
+
+			// Find defaultImageUrl in API Response
+			if (theConnection.getResponseCode() == 200) {
+				BufferedReader theBr = new BufferedReader(new InputStreamReader(theConnection.getInputStream()));
+				while ((theResponse = theBr.readLine()) != null) {
+					if (theResponse.indexOf("defaultImageUrl")>0){
+						f = theResponse.indexOf("defaultImageUrl")+18;
+						l = theResponse.indexOf(".jpg")+4;
+						imgURL = theResponse.substring(f,l).replaceAll("\\\\", "");
+					}
+				}
+			} else {
+				System.out.printf("[%s] is an invalid SKU... ", theSKU);
+				imgURL = "Error";
+			}
+			theConnection.disconnect();
+			return imgURL;
+		}
+		catch (MalformedURLException e) {return "Error";}
+		catch (IOException e) {return "Error";}
+	}
+
+
+	private static void getAndSavePics(String theURL_String, String theFileName){
+
+		try {
+			if (theURL_String.equals("Error"))System.out.printf("Error, not saving image file.\n");
+			else{
+				// Get image from URL
+				System.out.printf("Downloading Image from: %s... ", theURL_String);
+				URL theURL;
+				theURL = new URL (theURL_String);
+				InputStream in;
+				in = new BufferedInputStream(theURL.openStream());
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+				// Write image to file
+				byte[] buf = new byte[1024];
+				int n = 0;
+				while (-1!=(n=in.read(buf))) out.write(buf, 0, n);
+				out.close();
+				in.close();
+				byte[] response = out.toByteArray();
+				System.out.printf("Saving Image to: %s/%s.jpg\n", theDirName, theFileName);
+				FileOutputStream theFOS = new FileOutputStream (String.format("%s/%s.jpg", theDirName, theFileName));
+				theFOS.write(response);
+				theFOS.close();
+			}
+		}
+		catch (IOException e) {System.out.printf("IOException, did not save Image file for [%].", theURL_String);}
+	}
+
+	
+	private static ArrayList<String> getSKUsFromFile(String fileName) {
+		Scanner theFile = null;
+		ArrayList<String> aSKU_List = new ArrayList<String>();
+
+		try{
+			// Open File
+			theFile = new Scanner(new File(fileName));
+		
+			// Load SKUs into a list
+			while (theFile.hasNext()) aSKU_List.add(theFile.next());
+			return aSKU_List;
+		}
+		
+		catch (Exception e){
+			System.out.printf("Could not read from file [%s]. ", fileName);
+			return null;}
+	}
+
+	
+	private static String getFileName() {
+		String fileNameStr = new String("");
+		Scanner sc = new Scanner(System.in);
+
+		System.out.printf("Enter the Filepath and name (e.g. skus.txt) with SKU's: ");
+		fileNameStr = sc.nextLine();
+		return fileNameStr;
+	}
+
+	
+}
